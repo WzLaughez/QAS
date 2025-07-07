@@ -1,0 +1,25 @@
+services:
+  flask:
+    build:
+      context: .         # folder proyek ini
+      dockerfile: Dockerfile
+    container_name: flask-app
+    ports:
+      - "5000:5000"       # Flask exposed by Gunicorn
+    env_file:
+      - .env
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  ollama-data:
