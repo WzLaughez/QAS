@@ -14,22 +14,26 @@ RUN pip install pipenv
 # Set working directory
 WORKDIR /app
 
-# Salin Pipfile & lock (agar layer caching lebih optimal)
+# Salin Pipfile dan Pipfile.lock
 COPY Pipfile Pipfile.lock ./
 
+# Install torch + torchvision versi CPU secara manual
 RUN pip install --no-cache-dir torch==2.3.0+cpu torchvision==0.18.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
-# Install dependencies via pipenv
+# Install dependencies via pipenv (selain torch)
 RUN pipenv install --deploy --ignore-pipfile
 
-# Salin seluruh kode aplikasi
-COPY app/ .  
+# Salin semua kode
+COPY app/ .
 
+# Setup ENV agar Flask bisa jalan normal
 ENV PYTHONPATH=/app
 ENV CUDA_VISIBLE_DEVICES=""
-# Expose port Flask
+ENV PYTORCH_FORCE_CPU=1
+ENV PYTORCH_ENABLE_MPS_FALLBACK=1
+
+# Expose port
 EXPOSE 5000
 
-# Gunakan Gunicorn untuk menjalankan server
-# Ganti `app.routes:app` sesuai dengan path ke objek Flask kamu
+# Jalankan server
 CMD ["pipenv", "run", "gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
