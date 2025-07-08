@@ -5,10 +5,10 @@ services:
       dockerfile: Dockerfile
     container_name: flask-app
     ports:
-      - "5000:5000"       # Flask exposed by Gunicorn
+      - "5000:5000"
     environment:
-      - PYTORCH_FORCE_CPU=1
-      - CUDA_VISIBLE_DEVICES=""
+      - CUDA_VISIBLE_DEVICES=0  # aktifkan GPU 0
+    runtime: nvidia
     env_file:
       - .env
     depends_on:
