@@ -100,7 +100,7 @@ def run_llm(query: str, llm_model_name: str, chat_history: List[Dict[str, Any]] 
 
 if __name__ == "__main__":
     query = "Bagaimana struktur kurikulum program sarjana di UNTAN mendukung evaluasi mahasiswa melalui UTS dan UAS?"
-    model_name = "deepseek-r1"
+    model_name = "llama3"
     
     result = run_llm(query, model_name)
     print(result)

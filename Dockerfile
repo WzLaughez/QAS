@@ -1,35 +1,39 @@
-# Gunakan image Python + CUDA untuk GPU (CUDA 12.1 sesuai torch cu121)
-FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04
+# Base image: CUDA + CUDNN + Python
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
-# Install sistem dependencies dan Python 3.10
+# Install Python dan tools dasar
 RUN apt-get update && apt-get install -y \
     python3.10 python3.10-venv python3.10-dev python3-pip \
     build-essential curl git \
     && rm -rf /var/lib/apt/lists/*
 
-# Gunakan Python 3.10 sebagai default
+# Set Python 3.10 sebagai default
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
 
 # Install pipenv
 RUN pip install --no-cache-dir pipenv
 
-# Set working directory
+# ---------------- Tahapan cacheable mulai dari sini ---------------- #
+
+# Buat folder kerja
 WORKDIR /app
 
-# Salin Pipfile dan Pipfile.lock
+# Hanya copy Pipfile & lock dulu
 COPY Pipfile Pipfile.lock ./
 
-# Install PyTorch GPU versi cu121 (tidak pakai pipenv untuk torch, biar pasti jalan)
-RUN pip install --no-cache-dir torch==2.3.0 torchvision==0.18.0 --index-url https://download.pytorch.org/whl/cu121
+# Install torch GPU dan sentence-transformers sekali saja (tidak masuk pipenv agar stabil)
+RUN pip install --no-cache-dir \
+    torch==2.3.0 torchvision==0.18.0 --index-url https://download.pytorch.org/whl/cu121 \
+    sentence-transformers
 
-# Install dependencies via pipenv (selain torch)
+# Install dependencies lain dari Pipfile (pipenv)
 RUN pipenv install --deploy --ignore-pipfile
 
-# Salin kode ke container
+# Baru copy source code (ini agar perubahan file app tidak bikin re-install dependencies)
 COPY app/ .
 
-# Expose port Flask
+# Expose port
 EXPOSE 5000
 
-# Jalankan server Flask pakai gunicorn
+# Jalankan server
 CMD ["pipenv", "run", "gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
