@@ -22,9 +22,9 @@ WORKDIR /app
 COPY Pipfile Pipfile.lock ./
 
 # Install torch GPU dan sentence-transformers sekali saja (tidak masuk pipenv agar stabil)
-RUN pip install --no-cache-dir \
-    torch==2.3.0 torchvision==0.18.0 --index-url https://download.pytorch.org/whl/cu121 \
-    sentence-transformers
+RUN pip install --no-cache-dir torch==2.3.0 torchvision==0.18.0 --index-url https://download.pytorch.org/whl/cu121
+RUN pip install --no-cache-dir sentence-transformers
+
 
 # Install dependencies lain dari Pipfile (pipenv)
 RUN pipenv install --deploy --ignore-pipfile
