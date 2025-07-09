@@ -14,7 +14,7 @@ services:
           devices:
             - driver: nvidia
               count: 1
-              capabilities: [gpu] # aktifkan GPU 0
+              capabilities: [gpu]
     runtime: nvidia
     env_file:
       - .env
@@ -23,12 +23,20 @@ services:
     restart: unless-stopped
 
   ollama:
-    image: ollama/ollama
+    image: ollama/ollama:0.9.5  # opsional, tambahkan versi agar tidak auto-update
     container_name: ollama
     ports:
       - "11434:11434"
     volumes:
       - ollama-data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    runtime: nvidia
     restart: unless-stopped
 
 volumes:
