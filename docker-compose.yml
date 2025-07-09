@@ -4,6 +4,7 @@ services:
       context: .         # folder proyek ini
       dockerfile: Dockerfile
     container_name: flask-app
+    command: gunicorn app:app --bind 0.0.0.0:5000 --timeout 300 --workers 2
     ports:
       - "5000:5000"
     environment:
