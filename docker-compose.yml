@@ -7,7 +7,14 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - CUDA_VISIBLE_DEVICES=0  # aktifkan GPU 0
+      - CUDA_VISIBLE_DEVICES=0  # TANPA kutip ganda
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu] # aktifkan GPU 0
     runtime: nvidia
     env_file:
       - .env
