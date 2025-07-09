@@ -53,7 +53,9 @@ def run_llm(query: str, llm_model_name: str, chat_history: List[Dict[str, Any]] 
     )
     
     #Jenis LLM
-    llm = ChatOllama(model=llm_model_name, verbose=True)
+    # Pastikan model yang digunakan sesuai dengan yang ada di Ollama
+    ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    llm = ChatOllama(model=llm_model_name, verbose=True, base_url=ollama_base_url)
 
     #Prompt
     template = """

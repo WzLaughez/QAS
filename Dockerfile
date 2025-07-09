@@ -24,8 +24,16 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install PyTorch GPU (CUDA 12.1)
-RUN pip install --no-cache-dir torch==2.3.0 torchvision==0.18.0 --index-url https://download.pytorch.org/whl/cu121
+RUN pip install --no-cache-dir torch==2.2.2+cu121 torchvision==0.17.2+cu121 --index-url https://download.pytorch.org/whl/cu121
 
+
+# Install sentence transformers
+RUN pip install --no-cache-dir sentence-transformers==4.1.0 transformers==4.53.0 huggingface-hub==0.33.2
+# Install huggingface + sentence-transformers dengan versi kompatibel
+# RUN pip install --no-cache-dir \
+#     sentence-transformers==2.7.0 \
+#     transformers==4.40.2 \
+#     huggingface-hub==0.23.0
 # Install dependensi lainnya
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -39,4 +47,4 @@ ENV PYTHONPATH=/app
 EXPOSE 5000
 
 # Jalankan server dengan gunicorn
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "1200", "--workers", "2"]
