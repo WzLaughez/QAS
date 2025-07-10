@@ -1,7 +1,13 @@
 from flask import Flask, render_template, request, jsonify, session
 from core import run_llm
 from flask_session import Session
+from langchain_huggingface import HuggingFaceEmbeddings
+print("🔁 Preloading HuggingFaceEmbeddings...")
+_ = HuggingFaceEmbeddings(model_name="intfloat/multilingual-e5-large")
+print("✅ Embedding model loaded.")
 
+
+#  == Flask Application ==
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
 app.config['SESSION_TYPE'] = 'filesystem'

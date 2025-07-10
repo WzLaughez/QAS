@@ -7,29 +7,36 @@ services:
     command: gunicorn app:app --bind 0.0.0.0:5000 --timeout 300 --workers 2
     ports:
       - "5000:5000"
-    environment:
-      - CUDA_VISIBLE_DEVICES=0  # TANPA kutip ganda
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    runtime: nvidia
+      # Uncomment the following lines if you want to use GPU
+    # environment:
+    #   - CUDA_VISIBLE_DEVICES=0  # TANPA kutip ganda
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    # runtime: nvidia
     env_file:
       - .env
+    volumes:
+      - huggingface-cache:/root/.cache/huggingface
+      - torch-cache:/root/.cache/torch
     depends_on:
       - ollama
     restart: unless-stopped
 
   ollama:
-    image: ollama/ollama:0.9.5  # opsional, tambahkan versi agar tidak auto-update
+    image: ollama/ollama:0.1.32  # opsional, tambahkan versi agar tidak auto-update
     container_name: ollama
     ports:
       - "11434:11434"
+    entrypoint: sh -c "chmod +x /entrypoint.sh && /entrypoint.sh"
     volumes:
+      - ./entrypoint.sh:/entrypoint.sh
       - ollama-data:/root/.ollama
+      # uncomment untuk GPU
     deploy:
       resources:
         reservations:
@@ -42,3 +49,5 @@ services:
 
 volumes:
   ollama-data:
+  torch-cache:
+  huggingface-cache:
