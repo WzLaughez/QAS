@@ -32,9 +32,7 @@ services:
     container_name: ollama
     ports:
       - "11434:11434"
-    entrypoint: sh -c "chmod +x /entrypoint.sh && /entrypoint.sh"
     volumes:
-      - ./entrypoint.sh:/entrypoint.sh
       - ollama-data:/root/.ollama
       # uncomment untuk GPU
     deploy:
