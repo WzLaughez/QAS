@@ -37,3 +37,9 @@ document.getElementById('sendBtn').addEventListener('click', async () => {
   promptInput.focus();
   chatHistory.scrollTop = chatHistory.scrollHeight;
 });
+// Handler Enter key
+document.getElementById('promptInput').addEventListener('keydown', function (event) {
+  if (event.key === 'Enter') {
+    document.getElementById('sendBtn').click();
+  }
+});
